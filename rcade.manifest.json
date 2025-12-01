@@ -1,0 +1,16 @@
+{
+  "$schema": "https://rcade.recurse.com/manifest.schema.json",
+  "name": "Pong",
+  "display_name": "Pong",
+  "description": "Pong",
+  "visibility": "public",
+  "authors": {
+    "display_name": "Brett"
+  },
+  "dependencies": [
+    {
+      "name": "@rcade/input-classic",
+      "version": "1.0.0"
+    }
+  ]
+}

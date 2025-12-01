@@ -1,0 +1,28 @@
+name: Deploy to RCade
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy to RCade
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: latest
+      - name: Verify Emscripten installation
+        run: emcc --version
+      - name: Build with Emscripten
+        run: make build
+      - name: Deploy to RCade
+        uses: fcjr/rcade/action-deploy@main

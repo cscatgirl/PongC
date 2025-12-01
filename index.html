@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pong</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            width: 336px;
+            height: 262px;
+            overflow: hidden;
+            background-color: #1a1a2e;
+            color: #eee;
+            font-family: system-ui, sans-serif;
+        }
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        h1 {
+            font-size: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="build/main.js"></script>
+    <script>
+        window.Module = {};
+        createModule(window.Module).then(Module => {
+            console.log('Module loaded successfully');
+        }).catch(err => {
+            console.error('Failed to load module:', err);
+        });
+    </script>
+</body>
+
+</html>

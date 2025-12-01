@@ -1,0 +1,6 @@
+build/
+dist/
+*.o
+*.wasm
+*.js.mem
+.DS_Store
