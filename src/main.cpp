@@ -9,6 +9,7 @@ const int CANVAS_WIDTH = 336;
 const int CANVAS_HEIGHT = 262;
 const int PADDLE_WIDTH = 8;
 const int PADDLE_HEIGHT = 40;
+const int PADDLE_MARGIN = 10;  // Distance from edge
 const int BALL_SIZE = 6;
 const float PADDLE_SPEED = 3.0f;
 const float INITIAL_BALL_SPEED = 2.5f;
@@ -48,10 +49,10 @@ void resetBall() {
 }
 
 void handleInputEvent(const rcade::InputEvent& event) {
-    // Start game on any button press
-    if (!game.gameStarted && event.eventType == rcade::InputEventType::INPUT_START) {
+    // Start game on any button press (using PRESS event for immediate response)
+    if (!game.gameStarted && event.eventType == rcade::InputEventType::PRESS) {
         game.gameStarted = true;
-        return;
+        return;  // Don't process paddle movement on game start
     }
 
     // Only handle INPUT_START and INPUT_END events for paddle movement
@@ -111,7 +112,7 @@ void updateGame() {
 
     // Ball collision with paddles
     // Left paddle
-    if (game.ballX <= PADDLE_WIDTH &&
+    if (game.ballX <= PADDLE_MARGIN + PADDLE_WIDTH &&
         game.ballY + BALL_SIZE >= game.paddle1Y &&
         game.ballY <= game.paddle1Y + PADDLE_HEIGHT) {
         game.ballVelX = fabs(game.ballVelX);
@@ -120,7 +121,7 @@ void updateGame() {
     }
 
     // Right paddle
-    if (game.ballX + BALL_SIZE >= CANVAS_WIDTH - PADDLE_WIDTH &&
+    if (game.ballX + BALL_SIZE >= CANVAS_WIDTH - PADDLE_WIDTH - PADDLE_MARGIN &&
         game.ballY + BALL_SIZE >= game.paddle2Y &&
         game.ballY <= game.paddle2Y + PADDLE_HEIGHT) {
         game.ballVelX = -fabs(game.ballVelX);
@@ -151,9 +152,9 @@ void renderGame() {
     canvas->stroke("#444");
     canvas->clearLineDash();
 
-    // Draw paddles
-    canvas->fillRect(0, game.paddle1Y, PADDLE_WIDTH, PADDLE_HEIGHT, "#eee");
-    canvas->fillRect(CANVAS_WIDTH - PADDLE_WIDTH, game.paddle2Y, PADDLE_WIDTH, PADDLE_HEIGHT, "#eee");
+    // Draw paddles with margin from edges
+    canvas->fillRect(PADDLE_MARGIN, game.paddle1Y, PADDLE_WIDTH, PADDLE_HEIGHT, "#eee");
+    canvas->fillRect(CANVAS_WIDTH - PADDLE_WIDTH - PADDLE_MARGIN, game.paddle2Y, PADDLE_WIDTH, PADDLE_HEIGHT, "#eee");
 
     // Draw ball
     canvas->fillRect(game.ballX, game.ballY, BALL_SIZE, BALL_SIZE, "#eee");
