@@ -25,11 +25,6 @@ struct GameState {
     int score1;
     int score2;
     bool gameStarted;
-    // Event-based paddle movement state
-    bool paddle1MovingUp;
-    bool paddle1MovingDown;
-    bool paddle2MovingUp;
-    bool paddle2MovingDown;
 } game;
 
 // Global RCade objects
@@ -49,54 +44,32 @@ void resetBall() {
 }
 
 void handleInputEvent(const rcade::InputEvent& event) {
-    // Start game on any button press (using PRESS event for immediate response)
+    // Start game on any button press
     if (!game.gameStarted && event.eventType == rcade::InputEventType::PRESS) {
         game.gameStarted = true;
-        return;  // Don't process paddle movement on game start
-    }
-
-    // Only handle INPUT_START and INPUT_END events for paddle movement
-    if (event.eventType != rcade::InputEventType::INPUT_START &&
-        event.eventType != rcade::InputEventType::INPUT_END) {
-        return;
-    }
-
-    // Handle paddle movement events
-    if (event.type == "button") {
-        bool pressed = event.pressed;
-
-        if (event.player == 1) {
-            if (event.button == "UP") {
-                game.paddle1MovingUp = pressed;
-            } else if (event.button == "DOWN") {
-                game.paddle1MovingDown = pressed;
-            }
-        } else if (event.player == 2) {
-            if (event.button == "UP") {
-                game.paddle2MovingUp = pressed;
-            } else if (event.button == "DOWN") {
-                game.paddle2MovingDown = pressed;
-            }
-        }
     }
 }
 
 void updateGame() {
     if (!game.gameStarted) return;
 
-    // Update paddle 1 (left) based on event-driven state
-    if (game.paddle1MovingUp && game.paddle1Y > 0) {
+    // Poll current input state each frame (correct approach)
+    const rcade::PlayerInput& p1 = input->getPlayer1();
+    const rcade::PlayerInput& p2 = input->getPlayer2();
+
+    // Update paddle 1 (left) based on current input state
+    if (p1.UP && game.paddle1Y > 0) {
         game.paddle1Y -= PADDLE_SPEED;
     }
-    if (game.paddle1MovingDown && game.paddle1Y < CANVAS_HEIGHT - PADDLE_HEIGHT) {
+    if (p1.DOWN && game.paddle1Y < CANVAS_HEIGHT - PADDLE_HEIGHT) {
         game.paddle1Y += PADDLE_SPEED;
     }
 
-    // Update paddle 2 (right) based on event-driven state
-    if (game.paddle2MovingUp && game.paddle2Y > 0) {
+    // Update paddle 2 (right) based on current input state
+    if (p2.UP && game.paddle2Y > 0) {
         game.paddle2Y -= PADDLE_SPEED;
     }
-    if (game.paddle2MovingDown && game.paddle2Y < CANVAS_HEIGHT - PADDLE_HEIGHT) {
+    if (p2.DOWN && game.paddle2Y < CANVAS_HEIGHT - PADDLE_HEIGHT) {
         game.paddle2Y += PADDLE_SPEED;
     }
 
@@ -190,20 +163,13 @@ int main() {
     game.score1 = 0;
     game.score2 = 0;
     game.gameStarted = false;
-    game.paddle1MovingUp = false;
-    game.paddle1MovingDown = false;
-    game.paddle2MovingUp = false;
-    game.paddle2MovingDown = false;
     resetBall();
 
     // Initialize RCade SDK
     canvas = new rcade::Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
     input = new rcade::Input();
 
-    // Register event handlers for input events
-    // Use INPUT_START and INPUT_END to track when buttons are pressed/released
-    input->onInputEvent(rcade::InputEventType::INPUT_START, handleInputEvent);
-    input->onInputEvent(rcade::InputEventType::INPUT_END, handleInputEvent);
+    // Register event handler only for game start detection
     input->onInputEvent(rcade::InputEventType::PRESS, handleInputEvent);
 
     // Start game loop at 60 FPS
