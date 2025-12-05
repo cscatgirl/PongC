@@ -58,18 +58,18 @@ void updateGame() {
     const rcade::PlayerInput& p2 = input->getPlayer2();
 
     // Update paddle 1 (left) based on current input state
-    if (p1.UP && game.paddle1Y > 0) {
+    if (p1.DPAD.up && game.paddle1Y > 0) {
         game.paddle1Y -= PADDLE_SPEED;
     }
-    if (p1.DOWN && game.paddle1Y < CANVAS_HEIGHT - PADDLE_HEIGHT) {
+    if (p1.DPAD.down && game.paddle1Y < CANVAS_HEIGHT - PADDLE_HEIGHT) {
         game.paddle1Y += PADDLE_SPEED;
     }
 
     // Update paddle 2 (right) based on current input state
-    if (p2.UP && game.paddle2Y > 0) {
+    if (p2.DPAD.up && game.paddle2Y > 0) {
         game.paddle2Y -= PADDLE_SPEED;
     }
-    if (p2.DOWN && game.paddle2Y < CANVAS_HEIGHT - PADDLE_HEIGHT) {
+    if (p2.DPAD.down && game.paddle2Y < CANVAS_HEIGHT - PADDLE_HEIGHT) {
         game.paddle2Y += PADDLE_SPEED;
     }
 
